@@ -12,5 +12,10 @@ module.exports = {
    * @type {boolean} true | false
    * @description Whether show the logo in sidebar
    */
-  sidebarLogo: false
+  sidebarLogo: false,
+
+  /**
+   * @description 请求超时时间，毫秒（默认2分钟）
+   */
+  timeout: 1200000
 }

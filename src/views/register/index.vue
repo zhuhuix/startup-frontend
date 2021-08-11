@@ -18,7 +18,7 @@
         :rules="rules"
         label-width="100px"
         autocomplete="off"
-        hide-required-asterisk="true"
+        :hide-required-asterisk="true"
         size="medium"
       >
         <div style="padding-top: 10px">
@@ -164,6 +164,7 @@ export default {
             }
           }, 1000)
         }).catch(err => {
+          console.log(err.response)
           this.isDisable = false
           this.statusMsg = ''
           this.codeLoading = false
@@ -177,11 +178,12 @@ export default {
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {
           const user = {
-            email: this.ruleForm.email,
             code: this.ruleForm.code,
+            email: this.ruleForm.email,
             password: encrypt(this.ruleForm.pwd)
           }
-          register(this.ruleForm.code, user).then(res => {
+          register(user).then(res => {
+            console.log(res)
             this.$message({
               showClose: true,
               message: '注册成功，正在跳转到登录界面...',
@@ -316,13 +318,13 @@ $light_gray: #eee;
 
 <style scoped>
 /* 修改验证器样式 */
-/deep/ .el-form-item.is-error .el-input__inner {
+::v-deep .el-form-item.is-error .el-input__inner {
   border-color: #889aa4;
 }
-/deep/ .el-form-item.is-error .el-input__validateIcon {
+::v-deep .el-form-item.is-error .el-input__validateIcon {
   color: #889aa4;
 }
-/deep/ .el-form-item__error {
+::v-deep .el-form-item__error {
   color: #e6a23c;
 }
 </style>

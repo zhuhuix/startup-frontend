@@ -6,15 +6,15 @@
         <h3 class="title">欢迎使用</h3>
       </div>
 
-      <el-form-item prop="username">
+      <el-form-item prop="userName">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
-          ref="username"
-          v-model="loginForm.username"
+          ref="userName"
+          v-model="loginForm.userName"
           placeholder="邮箱"
-          name="username"
+          name="userName"
           type="text"
           tabindex="1"
           auto-complete="on"
@@ -58,11 +58,11 @@ export default {
   data() {
     return {
       loginForm: {
-        username: '',
+        userName: '',
         password: ''
       },
       loginRules: {
-        username: [{ type: 'email', required: true, trigger: 'blur', message: '请输入邮箱' }],
+        userName: [{ type: 'email', required: true, trigger: 'blur', message: '请输入邮箱' }],
         password: [{
           required: true,
           message: '创建密码',
@@ -227,13 +227,13 @@ $light_gray:#eee;
 
 <style scoped>
 /* 修改验证器样式 */
-/deep/ .el-form-item.is-error .el-input__inner {
+::v-deep .el-form-item.is-error .el-input__inner {
   border-color: #889aa4;
 }
-/deep/ .el-form-item.is-error .el-input__validateIcon {
+::v-deep .el-form-item.is-error .el-input__validateIcon {
   color: #889aa4;
 }
-/deep/ .el-form-item__error {
+::v-deep .el-form-item__error {
   color: #e6a23c;
 }
 </style>

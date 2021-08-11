@@ -2,15 +2,14 @@ import request from '@/utils/request'
 
 export function getEmailCode(email) {
   return request({
-    url: '/vue-admin-template/register/getEmailCode',
-    method: 'post',
-    email
+    url: '/api/auth/getEmailCode?email=' + email,
+    method: 'post'
   })
 }
 
-export function register(code, data) {
+export function register(data) {
   return request({
-    url: '/vue-admin-template/register?code=' + code,
+    url: '/api/auth/register',
     method: 'post',
     data
   })

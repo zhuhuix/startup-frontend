@@ -1,12 +1,14 @@
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
+import { encrypt } from '@/utils/rsaEncrypt'
 
 const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
     avatar: '',
+    user: {},
     roles: []
   }
 }
@@ -26,6 +28,9 @@ const mutations = {
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
   },
+  SET_USER: (state, user) => {
+    state.user = user
+  },
   SET_ROLES: (state, roles) => {
     state.roles = roles
   }
@@ -34,12 +39,12 @@ const mutations = {
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    const { username, password } = userInfo
+    const { userName, password } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+      login({ userName: userName.trim(), password: encrypt(password) }).then(response => {
+        commit('SET_TOKEN', response.token)
+        setUserInfo(response.user, commit)
+        setToken(response.token)
         resolve()
       }).catch(error => {
         reject(error)
@@ -77,7 +82,7 @@ const actions = {
   // user logout
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
+      logout().then(() => {
         removeToken() // must remove  token  first
         resetRouter()
         commit('RESET_STATE')
@@ -96,6 +101,15 @@ const actions = {
       resolve()
     })
   }
+}
+export const setUserInfo = (res, commit) => {
+  // console.log(res)
+  // 如果没有任何权限，则赋予一个默认的权限，避免请求死循环
+  console.log(res.roles)
+  if (res.roles !== undefined && res.roles.length > 0) {
+    commit('SET_ROLES', res.roles)
+  }
+  commit('SET_USER', res.user)
 }
 
 export default {
