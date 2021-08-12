@@ -1,4 +1,5 @@
 const getters = {
+  baseApi: state => state.api.baseApi,
   sidebar: state => state.app.sidebar,
   device: state => state.app.device,
   token: state => state.user.token,

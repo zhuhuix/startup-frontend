@@ -8,17 +8,25 @@ export function login(data) {
   })
 }
 
+export function logout() {
+  return request({
+    url: '/api/auth/logout',
+    method: 'delete'
+  })
+}
+
 export function getInfo(token) {
   return request({
-    url: '/api/user/info',
+    url: '/api/user',
     method: 'get',
     params: { token }
   })
 }
 
-export function logout() {
+export function saveUser(data) {
   return request({
-    url: '/api/auth/logout',
-    method: 'delete'
+    url: '/api/user',
+    method: 'post',
+    data
   })
 }
