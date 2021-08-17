@@ -40,7 +40,7 @@
               <li>
                 <div style="height: 100%">
                   <svg-icon icon-class="login" /> 登录账号
-                  <div class="user-right">{{ user.email }}</div>
+                  <div class="user-right">{{ user.userName }}</div>
                 </div>
               </li>
               <li>
@@ -139,15 +139,16 @@ export default {
     ])
   },
   created() {
-    this.form = { id: this.user.id, nickName: this.user.nickName, gender: this.user.gender, phone: this.user.phone }
-    // store.dispatch('user/getInfo').then(() => { })
+    store.dispatch('getInfo').then(() => {
+      this.form = { id: this.user.id, nickName: this.user.nickName, gender: this.user.gender, phone: this.user.phone }
+    })
   },
   methods: {
     toggleShow() {
       this.showDialog = !this.showDialog
     },
     cropUploadSuccess(jsonData, field) {
-      store.dispatch('user/getInfo').then(() => { })
+      store.dispatch('getInfo').then(() => { })
     },
     doSubmit() {
       if (this.$refs['form']) {
