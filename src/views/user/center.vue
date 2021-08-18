@@ -26,7 +26,7 @@
                 <img
                   :src="
                     user.avatarUrl
-                      ? baseApi + '/avatar/' + user.avatarUrl
+                      ? baseApi + '/file/' + user.avatarUrl
                       : Avatar
                   "
                   title="点击上传头像"
@@ -83,8 +83,8 @@
                 </el-form-item>
                 <el-form-item label="性别">
                   <el-radio-group v-model="form.gender" style="width: 178px">
-                    <el-radio label="男">男</el-radio>
-                    <el-radio label="女">女</el-radio>
+                    <el-radio label="1">男</el-radio>
+                    <el-radio label="2">女</el-radio>
                   </el-radio-group>
                 </el-form-item>
                 <el-form-item label="">
@@ -93,7 +93,7 @@
                     size="mini"
                     type="primary"
                     @click="doSubmit"
-                  >保存配置</el-button>
+                  >更新信息</el-button>
                 </el-form-item>
               </el-form>
             </el-tab-pane>
@@ -156,8 +156,12 @@ export default {
           if (valid) {
             this.saveLoading = true
             saveUser(this.form).then(() => {
-              this.editSuccessNotify()
-              store.dispatch('user/getInfo').then(() => { })
+              this.$notify({
+                title: '更新成功',
+                type: 'success',
+                duration: 2500
+              })
+              store.dispatch('getInfo').then(() => { })
               this.saveLoading = false
             }).catch(() => {
               this.saveLoading = false
