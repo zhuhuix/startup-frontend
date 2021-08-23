@@ -85,10 +85,6 @@ const user = {
   }
 }
 export const setUserInfo = (res, commit) => {
-  // 如果没有任何权限，则赋予一个默认的权限，避免请求死循环
-  if (res.roles !== undefined && res.roles.length > 0) {
-    commit('SET_ROLES', res.roles)
-  }
   commit('SET_USER', res.user)
 }
 
