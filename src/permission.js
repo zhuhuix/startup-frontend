@@ -21,33 +21,31 @@ router.beforeEach(async(to, from, next) => {
   const hasToken = getToken()
 
   if (hasToken) {
-    // console.log('hasToken', hasToken)
     if (to.path === '/login') {
       // if is logged in, redirect to the home page
       next({ path: '/' })
       NProgress.done()
     } else {
-      // determine whether the user has obtained his permission roles through getInfo
-      const hasRoles = store.getters.roles && store.getters.roles.length > 0
-      // console.log('hasRoles', hasRoles)
-      if (hasRoles) {
+      if (store.getters.roles.length === 0) {
         try {
-          // generate accessible routes map based on roles
-          store.dispatch('permission/generateRoutes', store.getters.roles)
-
-          // hack method to ensure that addRoutes is complete
-          // set the replace: true, so the navigation will not leave a history record
-          next({ ...to, replace: true })
+          // 首次登录需要获取用户信息
+          store.dispatch('getInfo').then(() => {
+            // 根据用户信息获取用户权限并动态加载
+            store.dispatch('permission/generateRoutes').then(() => next({ ...to, replace: true }))
+          })
         } catch (error) {
-          // remove token and go to login page to re-login
           store.dispatch('user/resetToken')
           Message.error(error || 'Has Error')
           next(`/login?redirect=${to.path}`)
           NProgress.done()
         }
       } else {
-        store.dispatch('permission/generateRoutes', [])
-        next()
+        // 如果未装载过，则需要装载
+        if (!store.getters.menuLoaded) {
+          store.dispatch('permission/generateRoutes').then(() => next())
+        } else {
+          next()
+        }
       }
     }
   } else {

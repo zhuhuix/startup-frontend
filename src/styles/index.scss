@@ -3,6 +3,7 @@
 @import './transition.scss';
 @import './element-ui.scss';
 @import './sidebar.scss';
+@import './app.scss';
 
 body {
   height: 100%;
@@ -61,5 +62,5 @@ div:focus {
 
 // main-container global css
 .app-container {
-  padding: 20px;
+  padding: 20px 20px 45px 20px;
 }

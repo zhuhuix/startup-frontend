@@ -29,3 +29,11 @@ export function saveUser(data) {
     data
   })
 }
+
+export function getUserPermission(userId) {
+  return request({
+    url: '/api/user/permission/' + userId,
+    method: 'get'
+  })
+}
+
