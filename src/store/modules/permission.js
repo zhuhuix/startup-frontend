@@ -35,12 +35,13 @@ const mutations = {
   SET_ROUTES: (state, routes) => {
     state.addRoutes = routes
     state.routes = constantRoutes.concat(routes)
-    console.log('routes', state.routes)
+    // console.log('routes', state.routes)
     // 增加动态路由
     router.addRoutes(routes)
   },
   SET_MENULOADED: (state, menuLoaded) => {
     state.menuLoaded = menuLoaded
+    // console.log('menuLoaded', state.menuLoaded)
   }
 }
 
@@ -50,13 +51,14 @@ const actions = {
       let accessedRoutes
       getUserPermission(store.getters.user.id).then(res => {
         accessedRoutes = ArrayToTreeData(res)
+        let asyncRouter = []
         if (accessedRoutes && accessedRoutes.length) {
-          const asyncRouter = filterAsyncRouter(accessedRoutes)
-          asyncRouter.push({ path: '*', redirect: '/404', hidden: true })
-          commit('SET_ROUTES', asyncRouter)
-          commit('SET_MENULOADED', true)
-          resolve(asyncRouter)
+          asyncRouter = filterAsyncRouter(accessedRoutes)
         }
+        asyncRouter.push({ path: '*', redirect: '/404', hidden: true })
+        commit('SET_ROUTES', asyncRouter)
+        commit('SET_MENULOADED', true)
+        resolve(asyncRouter)
       })
     })
   },

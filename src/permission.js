@@ -21,12 +21,12 @@ router.beforeEach(async(to, from, next) => {
   const hasToken = getToken()
 
   if (hasToken) {
-    if (to.path === '/login') {
+    if (to.path === '/login' && store.getters.user.userName !== undefined) {
       // if is logged in, redirect to the home page
       next({ path: '/' })
       NProgress.done()
     } else {
-      if (store.getters.roles.length === 0) {
+      if (store.getters.user.userName === undefined) {
         try {
           // 首次登录需要获取用户信息
           store.dispatch('getInfo').then(() => {
