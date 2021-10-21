@@ -50,10 +50,13 @@ const actions = {
     return new Promise(resolve => {
       let accessedRoutes
       getUserPermission(store.getters.user.id).then(res => {
+        console.log('res', res)
         accessedRoutes = ArrayToTreeData(res)
+        console.log('accessedRoutes', accessedRoutes)
         let asyncRouter = []
         if (accessedRoutes && accessedRoutes.length) {
           asyncRouter = filterAsyncRouter(accessedRoutes)
+          console.log('asyncRouter', asyncRouter)
         }
         asyncRouter.push({ path: '*', redirect: '/404', hidden: true })
         commit('SET_ROUTES', asyncRouter)
