@@ -69,9 +69,10 @@ export default {
       })
 
       // When there is only one child router, the child router is displayed by default
-      if (showingChildren.length === 1) {
-        return true
-      }
+      // zhuhuix 2021-10-27去除 父菜单下只有一个子菜单，也显示父菜单；（以下注释取消的效果是父菜单下只有一个子菜单，不显示父菜单，直接显示子菜单）
+      // if (showingChildren.length === 1) {
+      //   return true
+      // }
 
       // Show parent if there are no child router to display
       if (showingChildren.length === 0) {

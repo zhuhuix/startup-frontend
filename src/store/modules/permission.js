@@ -35,7 +35,7 @@ const mutations = {
   SET_ROUTES: (state, routes) => {
     state.addRoutes = routes
     state.routes = constantRoutes.concat(routes)
-    // console.log('routes', state.routes)
+    console.log('addRoutes routes', state.routes)
     // 增加动态路由
     router.addRoutes(routes)
   },

@@ -91,8 +91,9 @@
             <i class="el-icon-user" /><span style="margin-left: 5px">{{ item.roleName }}</span>
 
             <div style="display: inline-block; float: right; cursor: pointer" @click="doEdit(item.id)">
-              <i class="el-icon-edit-outline" style="margin-left: 15px" />
-
+              <el-tooltip effect="dark" content="编辑角色" placement="top">
+                <i class="el-icon-edit-outline" style="margin-left: 15px" />
+              </el-tooltip>
             </div>
           </div>
           <div>
@@ -107,21 +108,61 @@
               </li>
             </ul>
           </div>
+          <div style="display: inline-block; float: left; cursor: pointer" @click="doAssignPemission(item.id,item.roleName)">
+            <el-tooltip effect="dark" content="权限分配" placement="bottom">
+              <i class="el-icon-menu" />
+            </el-tooltip>
+          </div>
           <div style="display: inline-block; float: right; cursor: pointer" @click="doDelete(item.id)">
-            <i class="el-icon-delete" style="margin-left: 15px" />
+            <el-tooltip effect="dark" content="删除角色" placement="bottom">
+              <i class="el-icon-delete" style="margin-left: 15px" />
+            </el-tooltip>
           </div>
         </el-card>
       </el-col>
     </el-row>
+    <!-- 分配权限表单 -->
+    <el-dialog
+      append-to-body
+      :close-on-click-modal="false"
+      :visible.sync="showPermissionDialog"
+      :title="permission.roleName"
+      width="520px"
+    >
+      <treeselect
+        v-model="permission.menus"
+        :options="menuTree"
+        :show-count="true"
+        style="width: 480px"
+        :multiple="true"
+
+        :sort-value-by="sortValueBy"
+        :value-consists-of="valueConsistsOf"
+        :default-expand-level="1"
+        placeholder="请选择或搜索菜单进行权限分配"
+      />
+
+      <div slot="footer" class="dialog-footer">
+        <el-button type="text" @click="doPemissionCancel">取消</el-button>
+        <el-button
+          type="primary"
+          @click="doSubmitPemission(permission)"
+        >确认</el-button>
+      </div>
+    </el-dialog>
 
   </div>
 </template>
 
 <script>
 import { parseTime } from '@/utils/index'
-import { getRoleList, getRole, saveRole, deleteRole } from '@/api/role'
+import { getRoleList, getRole, saveRole, deleteRole, getPermission, savePermission } from '@/api/role'
+import { getMenuList } from '@/api/menu'
+import Treeselect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 export default {
   name: 'Role',
+  components: { Treeselect },
   data() {
     return {
       showDialog: false,
@@ -138,7 +179,12 @@ export default {
         roleName: [
           { required: true, message: '请输入角色名称', trigger: 'blur' }
         ]
-      }
+      },
+      showPermissionDialog: false,
+      permission: {},
+      menuTree: [],
+      valueConsistsOf: 'ALL_WITH_INDETERMINATE',
+      sortValueBy: 'INDEX'
     }
   },
   created() {
@@ -218,6 +264,51 @@ export default {
     },
     doBeforeClose() {
       this.showDialog = true
+    },
+    doAssignPemission(roleId, roleName) {
+      var param = { name: '' }
+      getMenuList(param).then(res => {
+        if (res) {
+          this.menuTree = this.ArrayToTreeData(res)
+          getPermission(roleId).then(res => {
+            if (res) {
+              const menus = []
+              res.forEach(element => {
+                menus.push(element.menuId)
+              })
+              this.permission = { roleId: roleId, roleName: roleName, menus: menus }
+              this.showPermissionDialog = true
+            }
+          })
+        }
+      })
+    },
+    doPemissionCancel() {
+      this.showPermissionDialog = false
+      this.permission = {}
+    },
+    doSubmitPemission(permission) {
+      console.log(permission)
+      savePermission(permission.roleId, permission.menus).then(res => {
+        if (res) {
+          this.showPermissionDialog = false
+          this.$notify({
+            title: '配置权限成功',
+            type: 'success',
+            duration: 2500
+          })
+        }
+      })
+    },
+    ArrayToTreeData(data) {
+      const cloneData = JSON.parse(JSON.stringify(data)) // 对源数据深度克隆
+      return cloneData.filter(father => {
+        const branchArr = cloneData.filter(child => father.id === child.pid) // 返回每一项的子级数组
+        branchArr.length > 0 ? father.children = branchArr : '' // 如果存在子级，则给父级添加一个children属性，并赋值
+        const parentArr = cloneData.filter(parent => parent.id === father.pid) // 判断该菜单的父级菜单是否存在
+        if (parentArr.length === 0) { return father } // 如果该菜单的父级菜单不存在，则直接返回该菜单
+        return father.pid === null // 返回第一层
+      })
     }
   }
 }
@@ -247,6 +338,13 @@ export default {
     text-align: left;
     text-overflow: ellipsis;
   }
+
+   .line{
+    width: 100%;
+    height: 1px;
+    border-top: 1px solid #ccc;
+  }
+
 }
 </style>
 
