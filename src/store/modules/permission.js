@@ -35,7 +35,6 @@ const mutations = {
   SET_ROUTES: (state, routes) => {
     state.addRoutes = routes
     state.routes = constantRoutes.concat(routes)
-    console.log('addRoutes routes', state.routes)
     // 增加动态路由
     router.addRoutes(routes)
   },
@@ -50,13 +49,10 @@ const actions = {
     return new Promise(resolve => {
       let accessedRoutes
       getUserPermission(store.getters.user.id).then(res => {
-        console.log('res', res)
         accessedRoutes = ArrayToTreeData(res)
-        console.log('accessedRoutes', accessedRoutes)
         let asyncRouter = []
         if (accessedRoutes && accessedRoutes.length) {
           asyncRouter = filterAsyncRouter(accessedRoutes)
-          console.log('asyncRouter', asyncRouter)
         }
         asyncRouter.push({ path: '*', redirect: '/404', hidden: true })
         commit('SET_ROUTES', asyncRouter)
