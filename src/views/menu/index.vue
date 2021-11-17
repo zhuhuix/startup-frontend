@@ -225,7 +225,7 @@ import { getMenuList, getMenuById, saveMenu, deleteMenu } from '@/api/menu'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 export default {
-  name: 'Menu',
+  name: '菜单管理',
   components: { SelectIcon, Treeselect },
   data() {
     return {

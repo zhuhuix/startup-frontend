@@ -26,13 +26,6 @@ export default {
       condition: true
     }
   },
-
-  computed: {
-    routes() {
-      return this.$store.state.permission.routes
-    }
-  },
-
   watch: {
     $route: {
       handler(to, form = null) {
@@ -45,14 +38,15 @@ export default {
           if (index < 0) {
             this.pageList.push({ name: to.path, label: to.meta.title, icon: to.meta.icon })
           }
+          // 缓存页面
+          const { name, meta } = this.$route
+          if (name && meta !== undefined && meta.noCache !== undefined && !meta.noCache) {
+            this.$store.dispatch('tabbar/addCachedView', this.$route)
+          }
         }
       },
       immediate: true
     }
-  },
-
-  mounted() {
-
   },
 
   methods: {
@@ -73,6 +67,8 @@ export default {
       this.pageCurrent = activeName
 
       this.pageList = tabs.filter(tab => tab.name !== targetName)
+      // 去除缓存页面
+      this.$store.dispatch('tabbar/delCachedView', this.$route)
       this.$router.push({ path: activeName })
     },
     tabChange(tab, event) {

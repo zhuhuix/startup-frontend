@@ -137,7 +137,7 @@ import { parseTime } from '@/utils/index'
 import { getUserList, deleteUser, getInfoById, getUserRoles, saveUserRoles } from '@/api/user'
 import { getRoleList } from '@/api/role'
 export default {
-  name: 'User',
+  name: '用户管理',
   data() {
     return {
       Avatar: Avatar,

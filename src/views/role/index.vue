@@ -161,7 +161,7 @@ import { getMenuList } from '@/api/menu'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 export default {
-  name: 'Role',
+  name: '角色管理',
   components: { Treeselect },
   data() {
     return {
