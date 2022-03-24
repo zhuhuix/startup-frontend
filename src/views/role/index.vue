@@ -37,6 +37,31 @@
         icon="el-icon-circle-plus-outline"
         @click="doAdd"
       >新增</el-button>
+      <el-button-group class="card-toggle-table">
+        <el-tooltip
+          v-if="cardType"
+          class="item"
+          effect="dark"
+          content="切换成表格"
+          placement="top-start"
+        >
+          <el-button size="mini" plain icon="el-icon-s-grid" @click="toggle" />
+        </el-tooltip>
+        <el-tooltip
+          v-else
+          class="item"
+          effect="dark"
+          content="切换成卡片"
+          placement="top-start"
+        >
+          <el-button
+            size="mini"
+            plain
+            icon="el-icon-bank-card"
+            @click="toggle"
+          />
+        </el-tooltip>
+      </el-button-group>
     </div>
     <!-- 表单渲染 -->
     <el-dialog
@@ -78,7 +103,8 @@
         >确认</el-button>
       </div>
     </el-dialog>
-    <el-row>
+    <!-- 卡片风格 -->
+    <el-row v-if="cardType">
       <el-col
         v-for="item in roles"
         :key="item.id"
@@ -88,9 +114,13 @@
       >
         <el-card>
           <div slot="header" class="clearfix">
-            <i class="el-icon-user" /><span style="margin-left: 5px">{{ item.roleName }}</span>
-
-            <div style="display: inline-block; float: right; cursor: pointer" @click="doEdit(item.id)">
+            <i class="el-icon-user" /><span style="margin-left: 5px">{{
+              item.roleName
+            }}</span>
+            <div
+              style="display: inline-block; float: right; cursor: pointer"
+              @click="doEdit(item.id)"
+            >
               <el-tooltip effect="dark" content="编辑角色" placement="top">
                 <i class="el-icon-edit-outline" style="margin-left: 15px" />
               </el-tooltip>
@@ -108,12 +138,18 @@
               </li>
             </ul>
           </div>
-          <div style="display: inline-block; float: left; cursor: pointer" @click="doAssignPemission(item.id,item.roleName)">
+          <div
+            style="display: inline-block; float: left; cursor: pointer"
+            @click="doAssignPemission(item.id, item.roleName)"
+          >
             <el-tooltip effect="dark" content="权限分配" placement="bottom">
               <i class="el-icon-menu" />
             </el-tooltip>
           </div>
-          <div style="display: inline-block; float: right; cursor: pointer" @click="doDelete(item.id)">
+          <div
+            style="display: inline-block; float: right; cursor: pointer"
+            @click="doDelete(item.id)"
+          >
             <el-tooltip effect="dark" content="删除角色" placement="bottom">
               <i class="el-icon-delete" style="margin-left: 15px" />
             </el-tooltip>
@@ -121,6 +157,56 @@
         </el-card>
       </el-col>
     </el-row>
+
+    <!-- 列表风格 -->
+    <el-table
+      v-else
+      ref="table"
+      :data="roles"
+      style="width: 100%; font-size: 12px"
+      @selection-change="selectionChangeHandler"
+    >
+      <el-table-column
+        :show-overflow-tooltip="true"
+        width="150"
+        prop="roleName"
+        label="角色名称"
+      />
+
+      <el-table-column
+        :show-overflow-tooltip="true"
+        prop="createTime"
+        width="155"
+        label="创建时间"
+      >
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.createTime) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="description" label="描述信息" />
+      <el-table-column label="操作" width="300" align="center" fixed="right">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            round
+            @click="doEdit(scope.row.id)"
+          >编辑角色</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            round
+            @click="doDelete(scope.row.id)"
+          >删除角色</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            round
+            @click="doAssignPemission(scope.row.id,scope.row.roleName)"
+          >分配权限</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
     <!-- 分配权限表单 -->
     <el-dialog
       append-to-body
@@ -135,7 +221,6 @@
         :show-count="true"
         style="width: 480px"
         :multiple="true"
-
         :sort-value-by="sortValueBy"
         :value-consists-of="valueConsistsOf"
         :default-expand-level="1"
@@ -150,7 +235,6 @@
         >确认</el-button>
       </div>
     </el-dialog>
-
   </div>
 </template>
 
@@ -167,6 +251,7 @@ export default {
     return {
       showDialog: false,
       loading: false,
+      cardType: true,
       formLoading: true,
       form: {},
       roles: [],
@@ -309,7 +394,11 @@ export default {
         if (parentArr.length === 0) { return father } // 如果该菜单的父级菜单不存在，则直接返回该菜单
         return father.pid === null // 返回第一层
       })
+    },
+    toggle() {
+      this.cardType = !this.cardType
     }
+
   }
 }
 
@@ -339,12 +428,20 @@ export default {
     text-overflow: ellipsis;
   }
 
-   .line{
+  .line {
     width: 100%;
     height: 1px;
     border-top: 1px solid #ccc;
   }
+}
 
+.card-toggle-table {
+  padding: 4px 0;
+  display: -webkit-flex;
+  display: flex;
+  float: right;
+  align-items: center;
+  margin-left: auto;
 }
 </style>
 
