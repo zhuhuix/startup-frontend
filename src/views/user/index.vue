@@ -35,22 +35,34 @@
         size="mini"
         type="danger"
         icon="el-icon-circle-plus-outline"
-        :disabled="selections.length===0"
+        :disabled="selections.length === 0"
         @click="doDelete"
       >删除</el-button>
     </div>
 
     <el-row>
       <!--角色分配表单-->
-      <el-dialog append-to-body :close-on-click-modal="false" :visible.sync="showDialog" title="角色分配" width="600px">
-        <el-form ref="form" :inline="true" :model="form" size="small" label-width="76px">
+      <el-dialog
+        append-to-body
+        :close-on-click-modal="false"
+        :visible.sync="showDialog"
+        title="角色分配"
+        width="600px"
+      >
+        <el-form
+          ref="form"
+          :inline="true"
+          :model="form"
+          size="small"
+          label-width="76px"
+        >
           <el-form-item label="登录账号" prop="userName">
             <el-input v-model="form.userName" :disabled="true" />
           </el-form-item>
           <el-form-item label="昵称" prop="nickName">
             <el-input v-model="form.nickName" :disabled="true" />
           </el-form-item>
-          <el-form-item style="margin-bottom: 0;" label="角色" prop="userRoles">
+          <el-form-item style="margin-bottom: 0" label="角色" prop="userRoles">
             <el-select
               v-model="userRoles"
               style="width: 455px"
@@ -71,29 +83,64 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="text" @click="doCancel">取消</el-button>
-          <el-button :loading="formLoading" type="primary" @click="doSubmit">确认</el-button>
+          <el-button
+            :loading="formLoading"
+            type="primary"
+            @click="doSubmit"
+          >确认</el-button>
         </div>
       </el-dialog>
       <el-tabs v-model="activeName" type="border-card">
         <el-tab-pane label="用户列表" name="userList">
-          <el-table ref="table" v-loading="loading" :data="users" style="width: 100%; font-size: 12px;" @selection-change="selectionChangeHandler">
+          <el-table
+            ref="table"
+            v-loading="loading"
+            :data="users"
+            style="width: 100%; font-size: 12px"
+            @selection-change="selectionChangeHandler"
+          >
             <el-table-column type="selection" width="55" />
-            <el-table-column :show-overflow-tooltip="true" width="150" prop="userName" label="登录账号" />
-            <el-table-column :show-overflow-tooltip="true" width="150" prop="nickName" label="用户昵称" />
+            <el-table-column
+              :show-overflow-tooltip="true"
+              width="150"
+              prop="userName"
+              label="登录账号"
+            />
+            <el-table-column
+              :show-overflow-tooltip="true"
+              width="150"
+              prop="nickName"
+              label="用户昵称"
+            />
             <el-table-column prop="gender" width="60" label="性别">
               <template slot-scope="scope">
-                <el-tag v-if="scope.row.gender===1" type="success">男</el-tag>
-                <el-tag v-if="scope.row.gender===2" type="warning">女</el-tag>
-                <el-tag v-if="scope.row.gender===0" type="info">未知</el-tag>
+                <el-tag v-if="scope.row.gender === 1" type="success">男</el-tag>
+                <el-tag v-if="scope.row.gender === 2" type="warning">女</el-tag>
+                <el-tag v-if="scope.row.gender === 0" type="info">未知</el-tag>
               </template>
             </el-table-column>
-            <el-table-column :show-overflow-tooltip="true" prop="phone" width="150" label="电话" />
-            <el-table-column :show-overflow-tooltip="true" prop="city" label="所在地区">
+            <el-table-column
+              :show-overflow-tooltip="true"
+              prop="phone"
+              width="150"
+              label="电话"
+            />
+            <el-table-column
+              :show-overflow-tooltip="true"
+              prop="city"
+              label="所在地区"
+            >
               <template slot-scope="scope">
-                <span>{{ scope.row.province }} {{ scope.row.city }} {{ scope.row.country }}</span>
+                <span>{{ scope.row.province }} {{ scope.row.city }}
+                  {{ scope.row.country }}</span>
               </template>
             </el-table-column>
-            <el-table-column :show-overflow-tooltip="true" prop="avatarUrl" width="80" label="头像">
+            <el-table-column
+              :show-overflow-tooltip="true"
+              prop="avatarUrl"
+              width="80"
+              label="头像"
+            >
               <template slot-scope="scope">
                 <img
                   :src="
@@ -105,7 +152,12 @@
                 >
               </template>
             </el-table-column>
-            <el-table-column :show-overflow-tooltip="true" prop="createTime" width="155" label="注册日期">
+            <el-table-column
+              :show-overflow-tooltip="true"
+              prop="createTime"
+              width="155"
+              label="注册日期"
+            >
               <template slot-scope="scope">
                 <span>{{ parseTime(scope.row.createTime) }}</span>
               </template>
@@ -117,16 +169,29 @@
               fixed="right"
             >
               <template slot-scope="scope">
-                <el-button size="mini" type="text" round @click="doAssignRole(scope.row.id)">分配角色</el-button>
-
+                <el-button
+                  size="mini"
+                  type="text"
+                  round
+                  @click="doAssignRole(scope.row.id)"
+                >分配角色</el-button>
               </template>
             </el-table-column>
           </el-table>
+          <el-pagination
+            class="page"
+            background
+            :current-page="currentPage"
+            :page-sizes="[5, 10, 15, 20]"
+            :page-size="pageSize"
+            layout="sizes,prev, pager, next"
+            :total="totalPage"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+          />
         </el-tab-pane>
       </el-tabs>
-
     </el-row>
-
   </div>
 </template>
 
@@ -134,7 +199,7 @@
 import { mapGetters } from 'vuex'
 import Avatar from '@/assets/images/avatar.png'
 import { parseTime } from '@/utils/index'
-import { getUserList, deleteUser, getInfoById, getUserRoles, saveUserRoles } from '@/api/user'
+import { getUserPageList, deleteUser, getInfoById, getUserRoles, saveUserRoles } from '@/api/user'
 import { getRoleList } from '@/api/role'
 export default {
   name: '用户管理',
@@ -146,6 +211,9 @@ export default {
       loading: false,
       formLoading: true,
       form: {},
+      totalPage: 0,
+      currentPage: 1,
+      pageSize: 5,
       users: [],
       selections: [],
       userName: '',
@@ -171,11 +239,24 @@ export default {
         param.createTimeStart = Date.parse(this.createTime[0])
         param.createTimeEnd = Date.parse(this.createTime[1])
       }
-      getUserList(param).then(res => {
+      param.pageSize = this.pageSize
+      param.currentPage = this.currentPage
+      console.log(param)
+      getUserPageList(param).then(res => {
         if (res) {
-          this.users = res
+          this.totalPage = res.totalPage
+          this.currentPage = res.currentPage
+          this.users = res.sysUserList
         }
       })
+    },
+    handleSizeChange(val) {
+      this.pageSize = val
+      this.doQuery()
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val
+      this.doQuery()
     },
     doDelete() {
       const ids = []
@@ -212,7 +293,7 @@ export default {
       this.formLoading = true
       getInfoById(id).then((res) => {
         this.form = { id: res.id, userName: res.userName, nickName: res.nickName, gender: res.gender, phone: res.phone }
-        var param = { }
+        var param = {}
         getRoleList(param).then(res => {
           if (res) {
             this.roles = res
@@ -263,6 +344,10 @@ export default {
   width: 32px;
   height: 32px;
   border-radius: 50%;
+}
+.page{
+  float: right;
+  margin-top: 5px;
 }
 </style>
 

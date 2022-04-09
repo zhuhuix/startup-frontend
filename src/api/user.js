@@ -53,6 +53,14 @@ export function getUserList(params) {
   })
 }
 
+export function getUserPageList(params) {
+  return request({
+    url: '/api/user/page',
+    method: 'post',
+    data: JSON.stringify(params)
+  })
+}
+
 export function getUserPermission(userId) {
   return request({
     url: '/api/user/permission/' + userId,
