@@ -39,7 +39,7 @@ export default {
     }
   },
   watch: {
-    chartData: {
+    option: {
       deep: true,
       handler(val) {
         this.chart.setOption(val)
